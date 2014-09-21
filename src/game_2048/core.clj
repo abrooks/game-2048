@@ -1,8 +1,8 @@
 (ns game-2048.core)
 
 (def direction {:left  0
-                :right 2
                 :up    1
+                :right 2
                 :down  3})
 
 (defn new-board
@@ -12,14 +12,6 @@
            (for [x (range size)
                  y (range size)]
              [[x y] 0]))))
-
-
-(defn print-board [board]
-  (let [size (-> board meta :size)]
-    (doseq [y (range size)]
-      (doseq [x (range size)]
-        (print " " (get board [x (- size (inc y))])))
-      (println))))
 
 (defn add-random
   ([board] (add-random board 0.9))
@@ -34,7 +26,7 @@
        (assoc board loc val))))
 
 (defn rotate-board [board n]
-  (if (zero? (rem n 4 #_rotations))
+  (if (zero? (rem n (count direction)))
     board
     (rotate-board
      (into board
@@ -67,7 +59,7 @@
   (-> board
       (rotate-board (direction dir))
       (collapse-board)
-      (rotate-board (- 4 #_rotations (direction dir)))))
+      (rotate-board (- (count direction) (direction dir)))))
 
 (defn init-board
   ([] (init-board 4))
@@ -76,3 +68,10 @@
       (new-board size)
       (add-random)
       (add-random))))
+
+(defn print-board [board]
+  (let [size (-> board meta :size)]
+    (doseq [y (range size)]
+      (doseq [x (range size)]
+        (print " " (get board [x (- size (inc y))])))
+      (println))))
