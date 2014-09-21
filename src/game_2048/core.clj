@@ -18,14 +18,17 @@
         (print " " (get board [x (- size (inc y))])))
       (println))))
 
-(defn add-random [board val additions]
-  (let [blanks (filter (fn [[p v]]
-                         (zero? v))
-                       board)
-        add-ons (for [n (range additions)
-                      :let [[pos _] (rand-nth blanks)]]
-                  {pos val})]
-    (apply merge-with + board add-ons)))
+(defn add-random
+  ([board] (add-random board 0.9))
+  ([board prob]
+     (let [blanks (filter (fn [[p v]]
+                            (zero? v))
+                          board)
+           [loc _] (rand-nth blanks)
+           val (if (< (rand) prob)
+                 2
+                 4)]
+       (assoc board loc val))))
 
 (defn rotate-board [board n]
   (if (zero? (rem n 4 #_rotations))
