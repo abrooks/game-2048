@@ -5,11 +5,14 @@
                 :up    1
                 :down  3})
 
-(defn new-board [size]
-  (into (with-meta {} {:size size})
-        (for [x (range size)
-              y (range size)]
-          [[x y] 0])))
+(defn new-board
+  ([] (new-board 4))
+  ([size]
+     (into (with-meta {} {:size size})
+           (for [x (range size)
+                 y (range size)]
+             [[x y] 0]))))
+
 
 (defn print-board [board]
   (let [size (-> board meta :size)]
@@ -65,3 +68,11 @@
       (rotate-board (direction dir))
       (collapse-board)
       (rotate-board (- 4 #_rotations (direction dir)))))
+
+(defn init-board
+  ([] (init-board 4))
+  ([size]
+     (->
+      (new-board size)
+      (add-random)
+      (add-random))))
