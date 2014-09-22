@@ -8,52 +8,46 @@
 (defn new-board
   ([] (new-board 4))
   ([size]
-     (into (with-meta {} {:size size})
-           (for [x (range size)
-                 y (range size)]
-             [[x y] 0]))))
+     (with-meta
+       (vec (repeat size (vec (repeat size 0))))
+       {:size size})))
 
 (defn add-random
   ([board] (add-random board 0.9))
   ([board prob]
-     (let [blanks (filter (fn [[p v]]
-                            (zero? v))
-                          board)
-           [loc _] (rand-nth blanks)
+     (let [size (-> board meta :size)
+           blanks (for [x (range size), y (range size)
+                        :when (zero? (get-in board [x y]))]
+                    [x y])
+           loc (rand-nth blanks)
            val (if (< (rand) prob)
                  2
                  4)]
-       (assoc board loc val))))
+       (assoc-in board loc val))))
 
 (defn rotate-board [board n]
   (if (zero? (rem n (count direction)))
     board
     (rotate-board
-     (into board
-           (map (fn [[[x y] v]]
-                  (let [Y (- (-> board meta :size) (inc y))]
-                    [[Y x] v]))
-                board))
+     (->
+      (apply mapv vector (reverse board))
+      (with-meta (meta board)))
      (dec n))))
 
 (defn collapse-row [row]
   (->> row
+       (remove zero?)
        (partition-by identity)
        (mapcat #(partition-all 2 %))
        (map #(apply + %))))
 
 (defn collapse-board [board]
-  (let [size (-> board meta :size)]
-    (->>
-     (for [y (range size)]
-       (map-indexed #(vector [% y] %2)
-                    (collapse-row
-                     (for [x (range size)
-                           :let [v (get board [x y])]
-                           :when (not (zero? v))]
-                       v))))
-     (apply concat)
-     (into (new-board size)))))
+  (->
+   (mapv #(->> (concat (collapse-row %) (repeat 0))
+               (take (-> board meta :size))
+               vec)
+         board)
+   (with-meta (meta board))))
 
 (defn move [board dir]
   (-> board
@@ -71,7 +65,7 @@
 
 (defn print-board [board]
   (let [size (-> board meta :size)]
-    (doseq [y (range size)]
-      (doseq [x (range size)]
-        (print " " (get board [x (- size (inc y))])))
-      (println))))
+    (doseq [x (reverse (range size))]
+      (doseq [y (range size)]
+        (printf "%5d" (get-in board [x y])))
+      (println ))))
