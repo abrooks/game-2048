@@ -68,4 +68,11 @@
     (doseq [x (reverse (range size))]
       (doseq [y (range size)]
         (printf "%5d" (get-in board [x y])))
-      (println ))))
+      (println ))
+    board))
+
+(defn play-round [board dir]
+  (-> board
+      (move dir)
+      (add-random)
+      (print-board)))
