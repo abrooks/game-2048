@@ -26,7 +26,7 @@
        (assoc-in board loc val))))
 
 (defn rotate-board [board n]
-  (if (zero? (rem n (count direction)))
+  (if (zero? n)
     board
     (rotate-board
      (->
