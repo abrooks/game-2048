@@ -15,15 +15,17 @@
 (defn add-random
   ([board] (add-random board 0.9))
   ([board prob]
-     (let [size (-> board meta :size)
-           blanks (for [x (range size), y (range size)
-                        :when (zero? (get-in board [x y]))]
-                    [x y])
-           loc (rand-nth blanks)
-           val (if (< (rand) prob)
-                 2
-                 4)]
-       (assoc-in board loc val))))
+     (if (not= board (-> board meta :last))
+       (let [size (-> board meta :size)
+             blanks (for [x (range size), y (range size)
+                          :when (zero? (get-in board [x y]))]
+                      [x y])
+             loc (rand-nth blanks)
+             val (if (< (rand) prob)
+                   2
+                   4)]
+         (assoc-in board loc val))
+       board)))
 
 (defn rotate-board [board n]
   (if (zero? n)
@@ -53,7 +55,8 @@
   (-> board
       (rotate-board (direction dir))
       (collapse-board)
-      (rotate-board (- (count direction) (direction dir)))))
+      (rotate-board (- (count direction) (direction dir)))
+      (vary-meta assoc :last board)))
 
 (defn init-board
   ([] (init-board 4))
