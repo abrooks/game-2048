@@ -74,8 +74,17 @@
       (println ))
     board))
 
+(defn detect-end [board]
+  (when (<= 2048 (apply max (flatten board)))
+    (println "You win!!!"))
+  (when (apply = board (map (partial move board)
+                            (keys direction)))
+    (println "No more moves!"))
+  board)
+
 (defn play-round [board dir]
   (-> board
       (move dir)
       (add-random)
-      (print-board)))
+      (print-board)
+      (detect-end)))
