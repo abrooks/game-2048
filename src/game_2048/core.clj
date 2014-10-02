@@ -88,3 +88,8 @@
       (add-random)
       (print-board)
       (detect-end)))
+
+(comment
+  (def b (atom (new-board)))
+  (swap! b play-round :left)
+  )
