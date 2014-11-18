@@ -12,14 +12,16 @@
        (vec (repeat size (vec (repeat size 0))))
        {:size size})))
 
+(defn blanks [board]
+  (let [size (-> board meta :size)]
+    (for [x (range size), y (range size)
+          :when (zero? (get-in board [x y]))]
+      [x y])))
+
 (defn add-random
   ([board] (add-random board 0.9))
   ([board prob]
-     (let [size (-> board meta :size)
-           blanks (for [x (range size), y (range size)
-                        :when (zero? (get-in board [x y]))]
-                    [x y])
-           loc (rand-nth blanks)
+     (let [loc (rand-nth (blanks board))
            val (if (< (rand) prob)
                  2
                  4)]
