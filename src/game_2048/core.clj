@@ -90,7 +90,55 @@
       (print-board)
       (detect-end)))
 
+(defn score [board]
+  (println "here")
+  (apply max (flatten board)))
+
+(defn auto-play [board player args]
+  (let [dir (player board args)
+        _ (prn dir)
+        res (play-round board dir)]
+    (if (not res)
+      (score board)
+      (recur res player args))))
+
+(defn random-player [board args]
+  (rand-nth (keys direction)))
+
+(defn empties [board]
+  (count (filter zero? (flatten board))))
+
+(defn noop? [board dir]
+  (= board (move board dir)))
+
+(defn game-score [board]
+  (reduce + (map #(* % %) (flatten board))))
+
+(defn monty-player [board [tries depth]]
+  (let [dirs (->
+              (for [d (keys direction)]
+                (future (->
+                         (for [t (range tries)
+                               :let [p (repeatedly (- depth 1) #(rand-nth (keys direction)))
+                                     r (reduce move (move board d) p)]]
+                           (game-score r))
+                         (->> (reduce +))
+                         vector
+                         (with-meta {:dir d}))))
+              doall
+              (->> (map deref)))]
+    (if (apply = dirs)
+      (or (first (remove (partial noop? board) (keys direction))) :left)
+      (-> dirs
+          sort
+          last
+          meta
+          :dir))))
+
 (comment
-  (def b (atom (new-board)))
+  (def b (atom (init-board)))
   (swap! b play-round :left)
+  (swap! b play-round :up)
+  (auto-play (init-board) random-player nil)
+  (auto-play (init-board) monty-player [512 16])
   )
