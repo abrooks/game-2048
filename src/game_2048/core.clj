@@ -71,6 +71,7 @@
       (doseq [y (range size)]
         (printf "%5d" (get-in board [x y])))
       (println ))
+    (println "-----")
     board))
 
 (defn detect-end [board]
