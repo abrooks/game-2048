@@ -129,11 +129,7 @@
               (->> (map deref)))]
     (if (apply = dirs)
       (or (first (remove (partial noop? board) (keys direction))) :left)
-      (-> dirs
-          sort
-          last
-          meta
-          :dir))))
+      (-> dirs sort last meta :dir))))
 
 (comment
   (def b (atom (init-board)))
