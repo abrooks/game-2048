@@ -91,7 +91,6 @@
       (detect-end)))
 
 (defn score [board]
-  (println "here")
   (apply max (flatten board)))
 
 (defn auto-play [board player args]
