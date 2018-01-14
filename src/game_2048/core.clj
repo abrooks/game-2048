@@ -104,9 +104,6 @@
 (defn random-player [board args]
   (rand-nth (keys direction)))
 
-(defn empties [board]
-  (count (filter zero? (flatten board))))
-
 (defn noop? [board dir]
   (= board (move board dir)))
 
