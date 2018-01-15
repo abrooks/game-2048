@@ -8,9 +8,9 @@
 (defn new-board
   ([] (new-board 4))
   ([size]
-     (with-meta
-       (vec (repeat size (vec (repeat size 0))))
-       {:size size})))
+   (with-meta
+     (vec (repeat size (vec (repeat size 0))))
+     {:size size})))
 
 (defn blanks [board]
   (let [size (-> board meta :size)]
@@ -21,11 +21,11 @@
 (defn add-random
   ([board] (add-random board 0.9))
   ([board prob]
-     (let [loc (rand-nth (blanks board))
-           val (if (< (rand) prob)
-                 2
-                 4)]
-       (assoc-in board loc val))))
+   (let [loc (rand-nth (blanks board))
+         val (if (< (rand) prob)
+               2
+               4)]
+     (assoc-in board loc val))))
 
 (defn rotate-board [board n]
   (if (zero? n)
@@ -60,17 +60,17 @@
 (defn init-board
   ([] (init-board 4))
   ([size]
-     (->
-      (new-board size)
-      (add-random)
-      (add-random))))
+   (->
+    (new-board size)
+    (add-random)
+    (add-random))))
 
 (defn print-board [board]
   (let [size (-> board meta :size)]
     (doseq [x (reverse (range size))]
       (doseq [y (range size)]
         (printf "%5d" (get-in board [x y])))
-      (println ))
+      (println))
     (println "-----")
     board))
 
@@ -132,5 +132,4 @@
   (swap! b play-round :left)
   (swap! b play-round :up)
   (auto-play (init-board) random-player nil)
-  (auto-play (init-board) monty-player [512 16])
-  )
+  (auto-play (init-board) monty-player [512 16]))
