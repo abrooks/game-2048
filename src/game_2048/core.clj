@@ -1,4 +1,19 @@
-(ns game-2048.core)
+(ns game-2048.core
+  (:require [clojure.spec.alpha :as s]))
+
+;; Each tile is an natural integer
+(s/def ::tile nat-int?)
+
+;; Each row is a vector of tiles
+(s/def ::row (s/coll-of ::tile :kind vector))
+
+;; A board is a vector of rows with a metadata :size defining
+;; the number of rows and the number of tiles per row
+(s/def ::board (s/and (s/coll-of ::row :kind vector)
+                      (fn [board]
+                        (let [size (-> board meta :size)]
+                         (and (= size (count board))
+                              (every? #(= size (count %))) board)))))
 
 (def direction {:left  0
                 :up    1
